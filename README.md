@@ -1,4 +1,4 @@
-# Background Image Remover
+# Image Background Remover
 
 This is a Flask-based web application that allows users to remove the background from images. Users can either select an image from their device or drag and drop an image into the designated area. The application uses the `rembg` library to process the images.
 
