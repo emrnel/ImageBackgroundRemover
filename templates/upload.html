@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Background Remover</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .upload-btn-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .btn {
+            border: 2px solid #4CAF50;
+            color: white;
+            background-color: #4CAF50;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .upload-btn-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        #upload-file {
+            display: none;
+        }
+        #image-preview {
+            margin-top: 20px;
+            max-width: 100%;
+            height: auto;
+            display: none;
+        }
+        .drop-area {
+            border: 2px dashed #4CAF50;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .drop-area.dragover {
+            border-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Background Remover</h2>
+        <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
+            <div class="upload-btn-wrapper">
+                <button type="button" class="btn" onclick="document.getElementById('upload-file').click();">Select an image</button>
+                <input type="file" name="file" id="upload-file" accept="image/*" onchange="previewImage(event)">
+            </div>
+            <div class="drop-area" id="drop-area">
+                Drag & Drop an image here
+            </div>
+            <button type="submit" class="btn" style="margin-top: 20px;">Remove Background</button>
+        </form>
+        <img id="image-preview" alt="Image Preview">
+    </div>
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const reader = new FileReader();
+            reader.onload = function() {
+                const dataURL = reader.result;
+                const imagePreview = document.getElementById('image-preview');
+                imagePreview.src = dataURL;
+                imagePreview.style.display = 'block';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        const dropArea = document.getElementById('drop-area');
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('dragover');
+            const files = event.dataTransfer.files;
+            if (files.length) {
+                const fileInput = document.getElementById('upload-file');
+                fileInput.files = files;
+                previewImage({ target: fileInput });
+            }
+        });
+    </script>
+</body>
+</html>
